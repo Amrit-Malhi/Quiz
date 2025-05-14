@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Simple Quiz</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+  <div class="bg-white shadow-xl rounded-xl p-8 max-w-xl w-full" id="quiz-container">
+    <h1 class="text-2xl font-bold mb-4">Quiz App</h1>
+    <div id="question" class="text-lg font-semibold mb-4"></div>
+    <div id="options" class="mb-4 space-y-2"></div>
+    <button id="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Submit</button>
+    <div id="feedback" class="mt-4 font-medium"></div>
+  </div>
+
+  <script>
+    const quizData = [
+      {
+        question: "What is the capital of France?",
+        options: ["Berlin", "Madrid", "Paris", "Rome"],
+        answer: "Paris",
+        explanation: "Paris is the capital and most populous city of France."
+      },
+      {
+        question: "Which planet is known as the Red Planet?",
+        options: ["Earth", "Mars", "Jupiter", "Saturn"],
+        answer: "Mars",
+        explanation: "Mars is often called the 'Red Planet' due to its reddish appearance."
+      },
+      {
+        question: "What is 2 + 2?",
+        options: ["3", "4", "5", "6"],
+        answer: "4",
+        explanation: "2 + 2 equals 4."
+      }
+    ];
+
+    let current = 0;
+    let score = 0;
+
+    const questionEl = document.getElementById("question");
+    const optionsEl = document.getElementById("options");
+    const feedbackEl = document.getElementById("feedback");
+    const submitBtn = document.getElementById("submit");
+
+    function loadQuestion() {
+      const q = quizData[current];
+      questionEl.textContent = q.question;
+      optionsEl.innerHTML = "";
+      feedbackEl.innerHTML = "";
+
+      q.options.forEach(option => {
+        const btn = document.createElement("button");
+        btn.textContent = option;
+        btn.className = "block w-full text-left px-4 py-2 border rounded hover:bg-gray-100";
+        btn.onclick = () => {
+          document.querySelectorAll("#options button").forEach(b => b.disabled = true);
+          if (option === q.answer) {
+            feedbackEl.innerHTML = `<span class="text-green-600">Correct!</span> ${q.explanation}`;
+            score++;
+          } else {
+            feedbackEl.innerHTML = `<span class="text-red-600">Incorrect.</span> ${q.explanation}`;
+          }
+          submitBtn.disabled = false;
+          submitBtn.textContent = current < quizData.length - 1 ? "Next Question" : "See Results";
+        };
+        optionsEl.appendChild(btn);
+      });
+
+      submitBtn.disabled = true;
+    }
+
+    submitBtn.onclick = () => {
+      current++;
+      if (current < quizData.length) {
+        loadQuestion();
+      } else {
+        document.getElementById("quiz-container").innerHTML = `
+          <h2 class="text-2xl font-bold mb-4">Quiz Finished!</h2>
+          <p class="text-lg">You scored ${score} out of ${quizData.length}.</p>
+        `;
+      }
+    };
+
+    loadQuestion();
+  </script>
+</body>
+</html>
